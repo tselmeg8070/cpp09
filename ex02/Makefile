@@ -4,9 +4,9 @@ CFLAGS = -Wall -Wextra -Werror
 CPPFLAGS = -std=c++98
 
 SRCS =	main.cpp \
-		RPN.cpp
+		PmergeMe.cpp
 
-INCLS = RPN.hpp
+INCLS = PmergeMe.hpp
 
 OBJS = $(SRCS:.cpp=.o)
 

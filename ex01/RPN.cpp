@@ -47,13 +47,11 @@ void	RPN::calculate(const std::string &str)
 
 	std::stringstream s(str);
 	while (std::getline(s, word, ' '))
-		words.push_back(word);
-	for (std::list<std::string>::iterator i = words.begin(); i != words.end(); i++)
 	{
-		if (!checkVal(*i))
+		if (!checkVal(word))
 			throw std::runtime_error("Value Whaat?");
-		if (std::isdigit((*i)[0]))
-			_values.push(std::atoi((*i).c_str()));
+		if (std::isdigit((word)[0]))
+			_values.push(std::atoi((word).c_str()));
 		else
 		{
 			if (_values.size() < 2)
@@ -62,7 +60,7 @@ void	RPN::calculate(const std::string &str)
 			_values.pop();
 			int b = _values.top();
 			_values.pop();
-			_values.push(doOperation(a, b, (*i)[0]));
+			_values.push(doOperation(a, b, (word)[0]));
 		}
 	}
 	if (_values.size() != 1)
