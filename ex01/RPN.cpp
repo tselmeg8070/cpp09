@@ -3,15 +3,13 @@
 RPN::RPN()
 {}
 
-RPN::RPN(const RPN &t)
-{
-	_values = t._values;
-}
+RPN::RPN(const RPN &t) : _values(t._values)
+{}
 
 RPN &RPN::operator=(const RPN &t)
 {
 	if (&t != this)
-		return (*this);
+		_values = t._values;
 	return (*this);
 }
 
@@ -43,7 +41,6 @@ int		doOperation(int a, int b, char operation)
 void	RPN::calculate(const std::string &str)
 {
 	std::string					word;
-	std::list<std::string>		words;
 
 	std::stringstream s(str);
 	while (std::getline(s, word, ' '))
