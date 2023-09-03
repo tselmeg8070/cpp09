@@ -12,43 +12,76 @@
 # include <sstream>
 # include <string>
 # include <list>
+# include <iomanip>
+
 
 class	PmergeMe {
-
-
 	private:
-		std::string			_original;
 		std::deque<int>		_dequeValues;
-		std::list<int>		_queueValues;
+		std::list<int>		_listValues;
+		std::deque<int>		_sortedDequeValues;
+		std::list<int>		_sortedListValues;
+		double				_dequeTimeTaken;
+		double				_listTimeTaken;
 	public:
-		PmergeMe(const std::string &str);
+		PmergeMe(char **argv);
 		PmergeMe(const PmergeMe &t);
 		~PmergeMe();
 		PmergeMe &operator=(const PmergeMe &t);
 
-		void	sortDeque();
-		void	sortQueue();
+		const std::deque<int>		&getDequeValues() const;
+		const std::list<int>		&getListValues() const;
+		const std::deque<int>		&getSortedDequeValues() const;
+		const std::list<int>		&getSortedListValues() const;
+		double				getDequeTimeTaken() const;
+		double				getListTimeTaken() const;
+
+		void	fordJohnsonDeque();
+		void	fordJohnsonList();
+
+		static bool customPairComparisonDeque(const std::deque<int>& a, const std::deque<int>& b);
+
+		static bool customPairComparisonList(const std::list<int>& a, const std::list<int>& b);
 
 		template <class Iterator>
-		void	insertionSort(Iterator begin, Iterator end)
-		{
-			std::iter_swap(begin, std::min_element(begin, end));
-			for (Iterator b = begin; ++b < end; begin = b)
-				for (Iterator c = b; *c < *begin; --c, --begin)
-					std::iter_swap(begin, c);
+		void mergeSortDeque(Iterator begin, Iterator end) {
+			if (end <= begin + 1) return;
+			Iterator middle = begin + (end - begin) / 2;
+			mergeSortDeque(begin, middle);
+			mergeSortDeque(middle, end);
+			std::inplace_merge(begin, middle, end, customPairComparisonDeque);
+		}
+
+		template <typename T>
+		typename std::list<T>::iterator lower_bound_list(typename std::list<T>::iterator first, typename std::list<T>::iterator last, const T& value) {
+			while (first != last) {
+				typename std::list<T>::iterator mid = first;
+				std::advance(mid, std::distance(first, last) / 2);
+
+				if (*mid < value) {
+					++mid;
+					first = mid;
+				} else {
+					last = mid;
+				}
+			}
+			return first;
 		}
 
 		template <class Iterator>
-		void mergeSort(Iterator begin, Iterator end) {
-			if (end - begin <= K)
-				insertionSort(begin, end);
-			else
-			{
-				Iterator middle = begin + (end - begin) / 2;
-				mergeSort(begin, middle);
-				mergeSort(middle, end);
-				std::inplace_merge(begin, middle, end);
-			}
+		void mergeSortList(Iterator begin, Iterator end) {
+			if (std::distance(begin, end) <= 1) return;
+
+			Iterator middle = begin;
+			std::advance(middle, std::distance(begin, end) / 2);
+
+			mergeSortList(begin, middle);
+			mergeSortList(middle, end);
+
+			std::list<typename Iterator::value_type> temp;
+			std::merge(begin, middle, middle, end, std::back_inserter(temp), customPairComparisonList);
+
+			std::copy(temp.begin(), temp.end(), begin);
 		}
 };
 
